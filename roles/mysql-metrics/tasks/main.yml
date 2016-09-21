@@ -1,0 +1,32 @@
+---
+# tasks file for roles/mysql-metrics
+
+# this can be moved into the role for more portability, but this will work in the context of vagrant
+- name: ensure that services are started up correctly
+  shell: docker-compose -f /vagrant/docker-compose.yml up -d 
+
+- name: wait for containers to be started
+  wait_for:
+    port: 3000
+    host: localhost
+    delay: 10
+
+- name: setup grafana to pull from prometheus and enable dashboards
+  uri: 
+    method: POST
+    user: "{{ grafana_user}}"
+    password: "{{ grafana_pass }}"
+    url: "{{ item.url }}"
+    body: "{{ item.data }}"
+    body_format: json
+    force_basic_auth: yes
+  with_items:
+    - url: http://localhost:3000/api/datasources
+      data: '{"name":"Prometheus","type":"prometheus","url":"http://prometheus:9090","access":"proxy","jsonData":{}}'
+    - url: http://localhost:3000/api/dashboards/import
+      data: '{"pluginId":"prometheus","path":"dashboards/prometheus_stats.json","overwrite":false,"inputs":[{"name":"*","type":"datasource","pluginId":"prometheus","value":"Prometheus"}]}'
+    - url: http://localhost:3000/api/plugins/percona-percona-app/settings
+      data: '{"enabled":true,"pinned":true,"jsonData":null}'
+    
+- name: apply mysql dashboard patch to grafana container
+  script: fix-grafana.sh

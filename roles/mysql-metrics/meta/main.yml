@@ -1,0 +1,28 @@
+galaxy_info:
+  author: Evin Callahan
+  description: Mysql with Grafana monitoring setup
+  company: Napsty, LLC
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+  license: MIT
+
+  min_ansible_version: 1.2
+
+  platforms:
+    - name: Ubuntu
+      versions:
+      - trusty
+      - utopic
+      - vivid
+      - wily
+      - xenial
+
+  galaxy_tags: 
+    - docker
+    - grafana
+    - mysql
+    - percona 
+
+dependencies: [angstwad.docker_ubuntu]

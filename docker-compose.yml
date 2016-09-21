@@ -1,0 +1,42 @@
+version: '2'
+services:
+
+  # simple myself setup
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: myRootPassword123
+      MYSQL_DATABASE: myDb
+      MYSQL_USER: myDbUser
+      MYSQL_PASSWORD: myPassword123
+
+  # grafana used for graphing mysql data
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '80:3000'
+    environment:
+      GF_INSTALL_PLUGINS: percona-percona-app
+
+  # tool to connect to mysql instance, and allow prometheus to collect mysql stats
+  prom_mysql_exporter:
+    image: prom/mysqld-exporter
+    links:
+      - mysql
+    ports:
+      - '9104:9104'
+    environment:
+      DATA_SOURCE_NAME: root:myRootPassword123@(mysql:3306)/myDb
+    command: /bin/mysqld_exporter collect.binlog_size=true collect.info_schema.processlist=true
+  
+  # prometheus stores and handles timeseries data for statistics around mysql
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    links:
+      - prom_mysql_exporter
+    ports:
+      - 9090

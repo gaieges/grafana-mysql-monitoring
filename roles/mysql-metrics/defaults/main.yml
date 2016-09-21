@@ -1,0 +1,6 @@
+---
+# defaults file for roles/mysql-metrics
+
+# this should be moved to vault or ansible-vault in a real setup
+grafana_user: admin
+grafana_pass: admin

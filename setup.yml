@@ -1,0 +1,12 @@
+---
+
+- hosts: all
+  become: yes
+
+  # some vars in order to configure roles properly
+  vars:
+    docker_group_members:
+      - vagrant
+
+  roles:
+    - mysql-metrics

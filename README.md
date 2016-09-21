@@ -1,4 +1,4 @@
-# Simple grafana monitoring of with MySQL metrics
+# Simple grafana monitoring of MySQL metrics
 
 > This repo attempts to demonstrate and provide a usable mysql install on docker, with grafana monitoring captured by prometheus
 
